@@ -243,15 +243,11 @@ This is because the gecko driver prefers legacy capabilities, both of which are 
 
 =head2 Chrome Notes
 
-extra_capabilities may? not work, because chromedriver considers the chromeOptions parameter to be invalid, despite it's documentation here:
+Use the option goog:chromeOptions instead of chromeOptions, if you are intending to pass extra_capabilities on a
+WD3 enabled server with chromedriver enabled.
 
     https://sites.google.com/a/chromium.org/chromedriver/capabilities
 
-Other bindings get around this by just using the 'old' way of passing desired capabilities.  You can do this too like so:
-
-    $Selenium::Remote::Driver::FORCE_WD2=1;
-
-This is now forced on during construction for chrome.
 
 =head1 CONSTRUCTOR
 
@@ -967,7 +963,7 @@ sub _request_new_session {
               if $args->{desiredCapabilities}->{browserName} eq 'firefox';
 
 #XXX the chrome documentation is lies, you can't do this yet
-#$args->{capabilities}->{alwaysMatch}->{'chromeOptions'}      = $args->{capabilities}->{alwaysMatch}->{$cap} if $args->{desiredCapabilities}->{browserName} eq 'chrome';
+#$args->{capabilities}->{alwaysMatch}->{'goog:chromeOptions'}      = $args->{capabilities}->{alwaysMatch}->{$cap} if $args->{desiredCapabilities}->{browserName} eq 'chrome';
 #Does not appear there are any MSIE based options, so let's just let that be
         }
         if (   exists( $args->{desiredCapabilities}->{browserName} )
@@ -1023,8 +1019,8 @@ sub _request_new_session {
     #Fix broken out of the box chrome because they hate the maintainers of their interfaces
     if ( $self->isa('Selenium::Chrome') ) {
         if ( exists $args->{desiredCapabilities} ) {
-            $args->{desiredCapabilities}{chromeOptions}{args} //= [];
-            push(@{$args->{desiredCapabilities}{chromeOptions}{args}}, qw{no-sandbox disable-dev-shm-usage});
+            $args->{desiredCapabilities}{'goog:chromeOptions'}{args} //= [];
+            push(@{$args->{desiredCapabilities}{'goog:chromeOptions'}{args}}, qw{no-sandbox disable-dev-shm-usage});
         }
     }
 

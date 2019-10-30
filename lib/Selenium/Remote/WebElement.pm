@@ -366,7 +366,7 @@ sub get_element_location {
     if (
         $self->driver->{is_wd3}
         && !(
-            grep { $self->driver->browser_name eq $_ } qw{chromeMicrosoftEdge}
+            grep { $self->driver->browser_name eq $_ } qw{chrome MicrosoftEdge}
         )
       )
     {
