@@ -248,7 +248,7 @@ sub is_selected {
     return $self->get_property('checked')
       if $self->driver->{is_wd3}
       && !( grep { $self->driver->browser_name eq $_ }
-        qw{MicrosoftEdge} );
+        qw{chrome MicrosoftEdge} );
     my $res = { 'command' => 'isElementSelected', 'id' => $self->id };
     return $self->_execute_command($res);
 }
@@ -266,7 +266,13 @@ sub is_selected {
 
 sub set_selected {
     my ($self) = @_;
-    if ( $self->driver->{is_wd3} ) {
+    if (
+        $self->driver->{is_wd3}
+        && !(
+            grep { $self->driver->browser_name eq $_ } qw{chrome}
+        )
+      )
+    {
         return if $self->is_selected();
         return $self->click();
     }
@@ -290,7 +296,13 @@ sub set_selected {
 
 sub toggle {
     my ($self) = @_;
-    if ( $self->driver->{is_wd3} ) {
+    if (
+        $self->driver->{is_wd3}
+        && !(
+            grep { $self->driver->browser_name eq $_ } qw{chrome}
+        )
+      )
+    {
         return $self->click() unless $self->is_selected();
         return $self->driver->execute_script(
 qq/ if (arguments[0].checked) { arguments[0].checked = 0 }; return arguments[0].checked; /,
@@ -319,7 +331,7 @@ sub is_enabled {
     if (
         $self->driver->{is_wd3}
         && !(
-            grep { $self->driver->browser_name eq $_ } qw{MicrosoftEdge}
+            grep { $self->driver->browser_name eq $_ } qw{chrome MicrosoftEdge}
         )
       )
     {
@@ -354,7 +366,7 @@ sub get_element_location {
     if (
         $self->driver->{is_wd3}
         && !(
-            grep { $self->driver->browser_name eq $_ } qw{MicrosoftEdge}
+            grep { $self->driver->browser_name eq $_ } qw{chromeMicrosoftEdge}
         )
       )
     {
@@ -391,7 +403,7 @@ sub get_size {
     if (
         $self->driver->{is_wd3}
         && !(
-            grep { $self->driver->browser_name eq $_ } qw{MicrosoftEdge}
+            grep { $self->driver->browser_name eq $_ } qw{chrome MicrosoftEdge}
         )
       )
     {
@@ -537,7 +549,7 @@ sub get_attribute {
     return $self->get_property($attr_name)
       if $self->driver->{is_wd3}
       && !( grep { $self->driver->browser_name eq $_ }
-        qw{MicrosoftEdge} )
+        qw{chrome MicrosoftEdge} )
       && !$no_i_really_mean_it;
 
     my $res = {
@@ -563,7 +575,7 @@ sub get_property {
     return $self->get_attribute($prop)
       if $self->driver->{is_wd3}
       && ( grep { $self->driver->browser_name eq $_ }
-        qw{MicrosoftEdge} );
+        qw{chrome MicrosoftEdge} );
     my $res =
       { 'command' => 'getElementProperty', id => $self->id, name => $prop };
     return $self->_execute_command($res);
@@ -612,7 +624,7 @@ sub is_displayed {
     if (
         $self->driver->{is_wd3}
         && !(
-            grep { $self->driver->browser_name eq $_ } qw{MicrosoftEdge}
+            grep { $self->driver->browser_name eq $_ } qw{chrome MicrosoftEdge}
         )
       )
     {
