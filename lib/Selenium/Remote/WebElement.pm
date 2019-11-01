@@ -266,13 +266,7 @@ sub is_selected {
 
 sub set_selected {
     my ($self) = @_;
-    if (
-        $self->driver->{is_wd3}
-        && !(
-            grep { $self->driver->browser_name eq $_ } qw{chrome}
-        )
-      )
-    {
+    if ( $self->driver->{is_wd3} ) {
         return if $self->is_selected();
         return $self->click();
     }
@@ -296,13 +290,7 @@ sub set_selected {
 
 sub toggle {
     my ($self) = @_;
-    if (
-        $self->driver->{is_wd3}
-        && !(
-            grep { $self->driver->browser_name eq $_ } qw{chrome}
-        )
-      )
-    {
+    if ( $self->driver->{is_wd3} ) {
         return $self->click() unless $self->is_selected();
         return $self->driver->execute_script(
 qq/ if (arguments[0].checked) { arguments[0].checked = 0 }; return arguments[0].checked; /,
