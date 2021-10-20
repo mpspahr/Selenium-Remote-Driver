@@ -64,6 +64,9 @@ GET     session/:sessionId/element/:id/css/:propertyName     0 getElementValueOf
 GET     session/:sessionId/element/:id/text                  0 getElementText               Get Element Text
 GET     session/:sessionId/element/:id/name                  0 getElementTagName            Get Element Tag Name
 GET     session/:sessionId/element/:id/rect                  0 getElementRect               Get Element Rect
+GET     session/:sessionId/element/:id/shadow                0 getElementShadowRoot         Get Element Shadow Root
+POST    session/:sessionId/element/:id/shadow/:shadowId/element 0 FindShadowChildElement       Find Element From Shadow Root
+POST    session/:sessionId/element/:id/shadow/:shadowId/elements 0 FindShadowChildElements      Find Elements From Shadow Root
 GET     session/:sessionId/element/:id/enabled               0 isElementEnabled             Is Element Enabled
 POST    session/:sessionId/element/:id/click                 1 clickElement                 Element Click
 POST    session/:sessionId/element/:id/clear                 1 clearElement                 Element Clear
@@ -178,6 +181,7 @@ sub get_params {
     $url =~ s/:sessionId/$args->{'session_id'}/;
     $url =~ s/:id/$args->{'id'}/;
     $url =~ s/:name/$args->{'name'}/;
+     $url =~ s/:shadowId/$args->{'shadow_id'}/;
     $url =~ s/:propertyName/$args->{'property_name'}/;
     $url =~ s/:other/$args->{'other'}/;
     $url =~ s/:windowHandle/$args->{'window_handle'}/;

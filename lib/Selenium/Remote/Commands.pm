@@ -215,6 +215,21 @@ has '_cmds' => (
                 'url'    => 'session/:sessionId/element/:id/elements',
                 'no_content_success' => 0
             },
+            # 'getElementShadowRoot' => {
+            #     'method' => 'GET',
+            #     'url'    => 'session/:sessionId/element/:id/shadow',
+            #     'no_content_success' => 0
+            # },
+            # 'FindShadowChildElement' => {
+            #     'method' => 'POST',
+            #     'url'    => 'session/:sessionId/element/:id/shadow/:shadowId/element',
+            #     'no_content_success' => 0
+            # },
+            # 'FindShadowChildElements' => {
+            #     'method' => 'POST',
+            #     'url'    => 'session/:sessionId/element/:id/shadow/:shadowId/elements',
+            #     'no_content_success' => 0
+            # },
             'clickElement' => {
                 'method'             => 'POST',
                 'url'                => 'session/:sessionId/element/:id/click',

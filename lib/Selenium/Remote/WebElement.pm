@@ -130,6 +130,49 @@ sub children {
     return $_[0]->{driver}->find_child_elements(@_);
 }
 
+sub get_shadow_root {
+    my ( $self ) = @_;
+
+    my $res = { 'command' => 'getElementShadowRoot', 'id' => $self->id };
+
+    my $ret_data = eval { $self->_execute_command($res) };
+    if ($@) {
+        use Data::Dumper;
+        print Dumper $ret_data;
+        croak $@;
+    }
+    else {
+        return $self->webelement_class->new(
+            shadow_id     => $ret_data,
+            driver => $self
+        );
+    }
+}
+
+sub find_shadow_element {
+    my ( $self ) = @_;
+
+    my $res = { 'command' => 'getElementShadowRoot', 'id' => $self->{shadow_id} };
+
+    my $ret_data = $self->_execute_command( $res );
+    return $self->webelement_class->new(
+        id     => $ret_data,
+        driver => $self
+    );
+}
+
+sub find_shadow_elements {
+    my ( $self ) = @_;
+
+    my $res = { 'command' => 'getElementsShadowRoot', 'id' => $self->{shadow_id} };
+
+    my $ret_data = $self->_execute_command( $res );
+    return $self->webelement_class->new(
+        id     => $ret_data,
+        driver => $self
+    );
+}
+
 =head2 click
 
  Description:
