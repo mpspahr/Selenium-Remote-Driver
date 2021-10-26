@@ -187,13 +187,7 @@ sub execute_async_script {
 
 sub submit {
     my ($self) = @_;
-    if (
-        $self->driver->{is_wd3}
-        && !(
-            grep { $self->driver->browser_name eq $_ } qw{MicrosoftEdge}
-        )
-      )
-    {
+    if ( $self->driver->{is_wd3} ) {
         if ( $self->get_tag_name() ne 'form' ) {
             return $self->driver->execute_script(
                 "return arguments[0].form.submit();",
@@ -269,11 +263,6 @@ sub send_keys {
 sub is_selected {
     my ($self) = @_;
 
-    my $to_check = $self->get_tag_name() eq 'option' ? 'selected' : 'checked';
-    return $self->get_property($to_check)
-      if $self->driver->{is_wd3}
-      && !( grep { $self->driver->browser_name eq $_ }
-        qw{chrome MicrosoftEdge} );
     my $res = { 'command' => 'isElementSelected', 'id' => $self->id };
     return $self->_execute_command($res);
 }
@@ -341,16 +330,7 @@ qq/ if (arguments[0].checked) { arguments[0].checked = 0 }; return arguments[0].
 
 sub is_enabled {
     my ($self) = @_;
-    if (
-        $self->driver->{is_wd3}
-        && !(
-            grep { $self->driver->browser_name eq $_ } qw{chrome MicrosoftEdge}
-        )
-      )
-    {
-        return 1 if $self->get_tag_name() ne 'input';
-        return $self->get_property('disabled') ? 0 : 1;
-    }
+    
     my $res = { 'command' => 'isElementEnabled', 'id' => $self->id };
     return $self->_execute_command($res);
 }
@@ -376,13 +356,7 @@ sub is_enabled {
 
 sub get_element_location {
     my ($self) = @_;
-    if (
-        $self->driver->{is_wd3}
-        && !(
-            grep { $self->driver->browser_name eq $_ } qw{chrome MicrosoftEdge}
-        )
-      )
-    {
+    if ( $self->driver->{is_wd3} ) {
         my $data = $self->get_element_rect();
         delete $data->{height};
         delete $data->{width};
@@ -413,13 +387,7 @@ sub get_element_location {
 
 sub get_size {
     my ($self) = @_;
-    if (
-        $self->driver->{is_wd3}
-        && !(
-            grep { $self->driver->browser_name eq $_ } qw{chrome MicrosoftEdge}
-        )
-      )
-    {
+    if ( $self->driver->{is_wd3} ) {
         my $data = $self->get_element_rect();
         delete $data->{x};
         delete $data->{y};
@@ -481,8 +449,7 @@ sub get_element_location_in_view {
         return {};
     }, { 'element-6066-11e4-a52e-4f735466cecf' => $self->{id} }
       )
-      if $self->driver->{is_wd3} && grep { $self->driver->browser_name eq $_ }
-      ( 'firefox', 'internet explorer', 'chrome' );
+      if $self->driver->{is_wd3};
     my $res = { 'command' => 'getElementLocationInView', 'id' => $self->id };
     return $self->_execute_command($res);
 }
@@ -527,19 +494,9 @@ sub clear {
  Description:
     Get the value of an element's attribute.
 
- Compatibility:
-    In older webDriver, this actually got the value of an element's property.
-    If you want to get the initial condition (e.g. the values in the tag hardcoded in HTML), pass 1 as the second argument.
-
-    Or, set $driver->{emulate_jsonwire} = 0 to not have to pass the extra arg.
-
-    This can only done on WebDriver 3 enabled servers.
-
  Input: 2
     Required:
         STRING - name of the attribute of the element
-    Optional:
-        BOOLEAN - "I really mean that I want the initial condition, quit being so compatible!!!"
 
 
  Output:
@@ -551,19 +508,10 @@ sub clear {
 =cut
 
 sub get_attribute {
-    my ( $self, $attr_name, $no_i_really_mean_it ) = @_;
+    my ( $self, $attr_name ) = @_;
     if ( not defined $attr_name ) {
         croak 'Attribute name not provided';
     }
-
-    #Handle global JSONWire emulation flag
-    $no_i_really_mean_it = 1 unless $self->{driver}->{emulate_jsonwire};
-
-    return $self->get_property($attr_name)
-      if $self->driver->{is_wd3}
-      && !( grep { $self->driver->browser_name eq $_ }
-        qw{chrome MicrosoftEdge} )
-      && !$no_i_really_mean_it;
 
     my $res = {
         'command' => 'getElementAttribute',
@@ -585,10 +533,7 @@ Only available on WebDriver 3 enabled servers.
 
 sub get_property {
     my ( $self, $prop ) = @_;
-    return $self->get_attribute($prop)
-      if $self->driver->{is_wd3}
-      && ( grep { $self->driver->browser_name eq $_ }
-        qw{chrome MicrosoftEdge} );
+
     my $res =
       { 'command' => 'getElementProperty', id => $self->id, name => $prop };
     return $self->_execute_command($res);
@@ -609,7 +554,12 @@ sub get_property {
 
 sub get_value {
     my ($self) = @_;
-    return $self->get_attribute('value');
+    my $value = $self->get_attribute('value');
+    if ( $self->driver->{is_wd3} && !defined $value ) {
+        return $self->get_property('value');
+    }
+    return $value;
+    
 }
 
 =head2 is_displayed
@@ -634,19 +584,7 @@ sub get_value {
 
 sub is_displayed {
     my ($self) = @_;
-    if (
-        $self->driver->{is_wd3}
-        && !(
-            grep { $self->driver->browser_name eq $_ } qw{chrome MicrosoftEdge}
-        )
-      )
-    {
-        return 0
-          if $self->get_tag_name() eq 'input'
-          && $self->get_property('type') eq 'hidden';    #hidden type inputs
-        return 0 unless $self->_is_in_viewport();
-        return int( $self->get_css_attribute('display') ne 'none' );
-    }
+    
     my $res = { 'command' => 'isElementDisplayed', 'id' => $self->id };
     return $self->_execute_command($res);
 }

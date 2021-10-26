@@ -58,6 +58,7 @@ POST    session/:sessionId/elements                          0 findElements     
 POST    session/:sessionId/element/:id/element               0 findChildElement             Find Element From Element
 POST    session/:sessionId/element/:id/elements              0 findChildElements            Find Elements From Element
 GET     session/:sessionId/element/:id/selected              0 isElementSelected            Is Element Selected
+GET     session/:sessionId/element/:id/displayed             0 isElementDisplayed           Is Element Displayed
 GET     session/:sessionId/element/:id/attribute/:name       0 getElementAttribute          Get Element Attribute
 GET     session/:sessionId/element/:id/property/:name        0 getElementProperty           Get Element Property
 GET     session/:sessionId/element/:id/css/:propertyName     0 getElementValueOfCssProperty Get Element CSS Value

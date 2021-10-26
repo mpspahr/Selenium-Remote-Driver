@@ -1268,33 +1268,8 @@ sub get_alert_text {
 sub send_keys_to_active_element {
     my ( $self, @strings ) = @_;
 
-    if ( $self->{is_wd3}
-        && !( grep { $self->browser_name eq $_ } qw{MicrosoftEdge} ) )
-    {
-        @strings = map { split( '', $_ ) } @strings;
-        my @acts = map {
-            (
-                {
-                    type  => 'keyDown',
-                    value => $_,
-                },
-                {
-                    type  => 'keyUp',
-                    value => $_,
-                }
-              )
-        } @strings;
-
-        my $action = {
-            actions => [
-                {
-                    id      => 'key',
-                    type    => 'key',
-                    actions => \@acts,
-                }
-            ]
-        };
-        return $self->general_action(%$action);
+    if ( $self->{is_wd3}) {
+        return $self->get_active_element()->send_keys(@strings);
     }
 
     my $res    = { 'command' => 'sendKeysToActiveElement' };
